@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import util
 
@@ -6,6 +6,8 @@ app = FastAPI()
 
 
 @app.post("/singer_predict")
-async def singer_predict(file: UploadFile = File(...)):
+async def singer_predict(request: Request):
     util.load_artifacts()
-    return util.classify_image(file)
+    form_data = await request.form()
+    img_path = form_data.get("image_path")
+    return {"predicted singer": util.classify_image(img_path)}
